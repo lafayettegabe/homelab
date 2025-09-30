@@ -13,7 +13,7 @@
 
   environment.systemPackages = with pkgs; [
     git htop btop iotop iftop jq curl wget vim
-    tmux nvim
+    tmux neovim
     kubectl k9s
   ];
 
