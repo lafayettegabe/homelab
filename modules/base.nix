@@ -25,30 +25,56 @@
     "vm.swappiness" = 10;
   };
 
+  # Additional kernel parameters to prevent sleep
+  boot.kernelParams = [
+    "acpi=noirq"
+    "acpi_osi=Linux"
+    "acpi_force=1"
+  ];
+
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
     dates = "03:30";
   };
 
-  # Laptop-specific settings
+  # Laptop-specific settings - prevent sleep when lid is closed
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchExternalPower = "ignore";
     lidSwitchDocked = "ignore";
+    extraConfig = ''
+      HandleSuspendKey=ignore
+      HandleHibernateKey=ignore
+      HandleLidSwitch=ignore
+      HandleLidSwitchExternalPower=ignore
+      HandleLidSwitchDocked=ignore
+    '';
   };
 
-  # Power management settings
+  # Disable power management that could cause sleep
   powerManagement = {
-    enable = true;
-    powertop.enable = true;
+    enable = false;  # Disable power management entirely
   };
 
-  # Prevent system from sleeping when lid is closed
+  # Additional sleep prevention
   systemd.sleep.extraConfig = ''
     HandleSuspendKey=ignore
+    HandleHibernateKey=ignore
     HandleLidSwitch=ignore
     HandleLidSwitchExternalPower=ignore
     HandleLidSwitchDocked=ignore
+    AllowSuspend=no
+    AllowHibernation=no
+    AllowSuspendThenHibernate=no
+    AllowHybridSleep=no
   '';
+
+  # Disable suspend/hibernate targets
+  systemd.targets = {
+    sleep.target.enable = false;
+    suspend.target.enable = false;
+    hibernate.target.enable = false;
+    hybrid-sleep.target.enable = false;
+  };
 }
