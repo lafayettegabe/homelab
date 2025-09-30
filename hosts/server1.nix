@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 {
-  networking.hostName = "server_1";
+  networking.hostName = "server1";
   networking.useDHCP = lib.mkDefault true;
 
   networking.firewall.enable = true;

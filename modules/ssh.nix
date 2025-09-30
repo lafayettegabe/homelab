@@ -10,7 +10,7 @@ in {
     };
   };
 
-  users.users.server_1 = {
+  users.users.server1 = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [ authorizedKeys ];

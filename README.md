@@ -1,4 +1,4 @@
-# homelab (server_1)
+# homelab (server1)
 
 Install on the target with:
 sudo ./install.sh

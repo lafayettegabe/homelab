@@ -63,8 +63,8 @@ bind Down select-pane -D
 
   # Create symlink for tmux config in user home
   system.activationScripts.tmuxConfig = ''
-    mkdir -p /home/server_1
-    ln -sf /etc/tmux.conf /home/server_1/.tmux.conf
-    chown server_1:users /home/server_1/.tmux.conf
+    mkdir -p /home/server1
+    ln -sf /etc/tmux.conf /home/server1/.tmux.conf
+    chown server1:users /home/server1/.tmux.conf
   '';
 }
