@@ -11,7 +11,15 @@ if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
 fi
 
 echo "==> Ensuring required tools"
-nix-env -iA nixpkgs.git nixpkgs.dosfstools nixpkgs.e2fsprogs nixpkgs.btrfs-progs nixpkgs.xfsprogs nixpkgs.rsync >/dev/null
+if ! nix-channel --list | grep -q nixpkgs; then
+  echo "Adding nixpkgs channel..."
+  nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
+  nix-channel --update
+fi
+
+nix-env -iA nixpkgs.git nixpkgs.dosfstools nixpkgs.e2fsprogs nixpkgs.btrfs-progs nixpkgs.xfsprogs nixpkgs.rsync >/dev/null 2>&1 || {
+  echo "Warning: Some tools may not be available, continuing anyway..."
+}
 
 echo "==> Detecting root and EFI partitions"
 ROOT_DEV="$(findmnt -n -o SOURCE /)"
