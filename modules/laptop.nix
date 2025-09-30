@@ -1,3 +1,4 @@
+# temp config until I get a dedicated server (using my old laptop)
 { config, pkgs, lib, ... }:
 {
   nixpkgs.config.allowUnfree = true;
