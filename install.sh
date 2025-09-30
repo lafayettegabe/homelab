@@ -59,7 +59,7 @@ echo "==> Labeling EFI as NIXOS_EFI"
 # Works on mounted vfat in most cases
 dosfslabel "${EFI_DEV}" NIXOS_EFI || fatlabel "${EFI_DEV}" NIXOS_EFI || true
 
-echo "==> Replacing /etc/nixos with repo contents"
+echo "==> Replacing /etc/nixos with local homelab contents"
 backup_dir="/etc/nixos.backup.$(date +%s)"
 if [[ -d /etc/nixos ]]; then
   cp -a /etc/nixos "${backup_dir}" || true
@@ -67,7 +67,15 @@ if [[ -d /etc/nixos ]]; then
 fi
 mkdir -p /etc/nixos
 
-git clone --branch "${BRANCH}" "${REPO_URL}" /etc/nixos
+
+if [[ -f "configuration.nix" ]]; then
+  cp -r . /etc/nixos/
+else
+  echo "Error: Please run this script from the homelab directory"
+  echo "Current directory: $(pwd)"
+  echo "Expected files: configuration.nix, modules/, secrets/, etc."
+  exit 1
+fi
 
 echo "==> Fixing permissions"
 if [[ -d /etc/nixos/secrets ]]; then
