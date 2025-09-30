@@ -6,26 +6,30 @@
     lidSwitch = "ignore";
     lidSwitchExternalPower = "ignore";
     lidSwitchDocked = "ignore";
-    extraConfig = ''
-      HandleSuspendKey=ignore
-      HandleHibernateKey=ignore
-      HandleLidSwitch=ignore
-      HandleLidSwitchExternalPower=ignore
-      HandleLidSwitchDocked=ignore
-    '';
+    settings = {
+      Login = {
+        HandleSuspendKey = "ignore";
+        HandleHibernateKey = "ignore";
+        HandleLidSwitch = "ignore";
+        HandleLidSwitchExternalPower = "ignore";
+        HandleLidSwitchDocked = "ignore";
+      };
+    };
   };
 
-  systemd.sleep.extraConfig = ''
-    HandleSuspendKey=ignore
-    HandleHibernateKey=ignore
-    HandleLidSwitch=ignore
-    HandleLidSwitchExternalPower=ignore
-    HandleLidSwitchDocked=ignore
-    AllowSuspend=no
-    AllowHibernation=no
-    AllowSuspendThenHibernate=no
-    AllowHybridSleep=no
-  '';
+  systemd.sleep.settings = {
+    Sleep = {
+      HandleSuspendKey = "ignore";
+      HandleHibernateKey = "ignore";
+      HandleLidSwitch = "ignore";
+      HandleLidSwitchExternalPower = "ignore";
+      HandleLidSwitchDocked = "ignore";
+      AllowSuspend = "no";
+      AllowHibernation = "no";
+      AllowSuspendThenHibernate = "no";
+      AllowHybridSleep = "no";
+    };
+  };
 
   systemd.services = {
     "systemd-suspend".enable = false;
