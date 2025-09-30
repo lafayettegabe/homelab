@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }:
-let authorizedKeys = builtins.readFile ./secrets/homelab_authorized_keys.pub;
+let authorizedKeys = builtins.readFile ../secrets/homelab_authorized_keys.pub;
 in {
   services.openssh = {
     enable = true;
