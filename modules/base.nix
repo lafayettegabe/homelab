@@ -70,11 +70,10 @@
     AllowHybridSleep=no
   '';
 
-  # Disable suspend/hibernate targets
-  systemd.targets = {
-    sleep.target.enable = false;
-    suspend.target.enable = false;
-    hibernate.target.enable = false;
-    hybrid-sleep.target.enable = false;
+  # Disable systemd sleep services
+  systemd.services = {
+    "systemd-suspend".enable = false;
+    "systemd-hibernate".enable = false;
+    "systemd-hybrid-sleep".enable = false;
   };
 }
