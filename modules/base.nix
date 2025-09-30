@@ -30,4 +30,25 @@
     allowReboot = true;
     dates = "03:30";
   };
+
+  # Laptop-specific settings
+  services.logind = {
+    lidSwitch = "ignore";
+    lidSwitchExternalPower = "ignore";
+    lidSwitchDocked = "ignore";
+  };
+
+  # Power management settings
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+  };
+
+  # Prevent system from sleeping when lid is closed
+  systemd.sleep.extraConfig = ''
+    HandleSuspendKey=ignore
+    HandleLidSwitch=ignore
+    HandleLidSwitchExternalPower=ignore
+    HandleLidSwitchDocked=ignore
+  '';
 }
