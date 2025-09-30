@@ -14,10 +14,16 @@
   environment.systemPackages = with pkgs; [
     git htop btop iotop iftop jq curl wget vim
     tmux neovim
+    lm_sensors
     kubectl k9s
   ];
 
-  boot.kernelModules = [ "br_netfilter" ];
+  boot.kernelModules = [ 
+    "br_netfilter"
+    "coretemp"
+    "k10temp" 
+    "nct6775"
+  ];
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.bridge.bridge-nf-call-iptables" = 1;
