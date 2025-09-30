@@ -42,23 +42,21 @@ set -g status-right "#[fg=colour136,bg=default]#[fg=colour235,bg=colour136] %Y-%
 # ─── 8) Reload Shortcut ──────────────────────────────────────────────────────
 bind r source-file ~/.tmux.conf \; display-message "🔄 tmux.conf reloaded!"
 
-# ─── 9) Use Option (Meta) as Prefix ──────────────────────────────────────────
-unbind C-b
-set -g prefix M-b
-bind M-b send-prefix
+# ─── 9) Use Default Ctrl+b as Prefix ──────────────────────────────────────────
+# C-b is the default prefix, no changes needed
 
-# ─── 10) Option Key Shortcuts ────────────────────────────────────────────────
+# ─── 10) Key Shortcuts ────────────────────────────────────────────────────────
 set -s escape-time 0
 
-# Split panes with Option + | or Option + -
+# Split panes with Ctrl+b + | or Ctrl+b + -
 bind | split-window -h
 bind - split-window -v
 
-# Move between panes with Option + Arrow Keys
-bind -n M-Left select-pane -L
-bind -n M-Right select-pane -R
-bind -n M-Up select-pane -U
-bind -n M-Down select-pane -D
+# Move between panes with Ctrl+b + Arrow Keys
+bind Left select-pane -L
+bind Right select-pane -R
+bind Up select-pane -U
+bind Down select-pane -D
 '';
     mode = "0644";
   };
