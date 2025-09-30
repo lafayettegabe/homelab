@@ -17,4 +17,8 @@
   environment.shellInit = ''
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
   '';
+
+  environment.shellAliases = {
+    k = "kubectl";
+  };
 }
