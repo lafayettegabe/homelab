@@ -1,6 +1,7 @@
 { config, pkgs, lib, ... }:
 {
-  # Laptop-specific settings - prevent sleep when lid is closed
+  nixpkgs.config.allowUnfree = true;
+
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchExternalPower = "ignore";
@@ -14,12 +15,6 @@
     '';
   };
 
-  # Disable power management that could cause sleep
-  powerManagement = {
-    enable = false;  # Disable power management entirely
-  };
-
-  # Additional sleep prevention
   systemd.sleep.extraConfig = ''
     HandleSuspendKey=ignore
     HandleHibernateKey=ignore
@@ -32,17 +27,44 @@
     AllowHybridSleep=no
   '';
 
-  # Disable systemd sleep services
   systemd.services = {
     "systemd-suspend".enable = false;
     "systemd-hibernate".enable = false;
     "systemd-hybrid-sleep".enable = false;
   };
 
-  # Additional kernel parameters to prevent sleep
   boot.kernelParams = [
+    "video=eDP-1:d"
+    "amd_pstate=active"
     "acpi=noirq"
     "acpi_osi=Linux"
     "acpi_force=1"
+    "nouveau.modeset=0"
+    "nvidia.modeset=0"
   ];
+
+  boot.blacklistedKernelModules = [ 
+    "nvidia" 
+    "nvidia_drm" 
+    "nvidia_modeset" 
+    "nouveau" 
+  ];
+
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "schedutil";
+    powertop.enable = true;
+  };
+
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      CPU_SCALING_MIN_FREQ_ON_AC = 0;
+      CPU_SCALING_MAX_FREQ_ON_AC = 0;
+      CPU_SCALING_MIN_FREQ_ON_BAT = 0;
+      CPU_SCALING_MAX_FREQ_ON_BAT = 0;
+    };
+  };
 }
