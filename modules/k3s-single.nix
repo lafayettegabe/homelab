@@ -7,6 +7,7 @@
       "--write-kubeconfig-mode=0644"
       "--disable=traefik"
       "--disable=servicelb"
+      "--disable=metrics-server"
     ];
   };
 
