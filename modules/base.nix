@@ -38,9 +38,6 @@
   networking.firewall.allowedTCPPorts = [ 6443 2379 2380 8472 10250 51820 51821 5001 ];
   networking.firewall.allowedUDPPorts = [ 8472 ];
   networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
-  networking.firewall.extraCommands = ''
-    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 -m udp --dport 8472 -j nixos-fw-accept
-  '';
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
