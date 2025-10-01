@@ -1,45 +1,24 @@
 { config, pkgs, lib, ... }:
 {
-  # Use full Kubernetes with kubeadm instead of K3s
-  services.kubernetes = {
-    master = {
-      enable = true;
-      apiserver = {
-        advertiseAddress = "192.168.1.2";
-        bindAddress = "0.0.0.0";
-        extraOpts = "--service-cluster-ip-range=10.43.0.0/16";
-      };
-      etcd = {
-        enable = true;
-        extraOpts = {
-          listen-client-urls = "https://127.0.0.1:2379,https://192.168.1.2:2379";
-          listen-peer-urls = "https://192.168.1.2:2380";
-          initial-cluster = "homelab=https://192.168.1.2:2380";
-          initial-cluster-state = "new";
-          initial-cluster-token = "k8s-cluster-token";
-          data-dir = "/var/lib/etcd";
-        };
-      };
-    };
-    worker = {
-      enable = true;
-      kubelet = {
-        extraOpts = "--pod-cidr=10.42.0.0/16";
-      };
-    };
-    flannel = {
-      enable = true;
-      network = "10.42.0.0/16";
-    };
-    addons.dns = {
-      enable = true;
-    };
-    addons.dashboard = {
-      enable = true;
-    };
+  # Try K3s with minimal configuration and different approach
+  services.k3s = {
+    enable = true;
+    role = "server";
+    extraFlags = [
+      "--write-kubeconfig-mode=0644"
+      "--disable=traefik"
+      "--disable=servicelb"
+      "--disable=metrics-server"
+      "--disable=local-storage"
+      "--disable-network-policy"
+      "--cluster-init"
+      "--cluster-cidr=10.42.0.0/16"
+      "--service-cidr=10.43.0.0/16"
+      "--flannel-backend=host-gw"
+    ];
   };
 
-  # Configure containerd for Kubernetes
+  # Use external containerd
   virtualisation.containerd = {
     enable = true;
     settings = {
@@ -53,11 +32,11 @@
   systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
 
   environment.variables = {
-    KUBECONFIG = "/etc/kubernetes/admin.conf";
+    KUBECONFIG = "/etc/rancher/k3s/k3s.yaml";
   };
 
   environment.shellInit = ''
-    export KUBECONFIG=/etc/kubernetes/admin.conf
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
   '';
 
   environment.shellAliases = {
