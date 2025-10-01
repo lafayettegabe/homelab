@@ -30,6 +30,9 @@
     "vm.swappiness" = 10;
   };
 
+  # DNS configuration
+  networking.nameservers = [ "8.8.8.8" "1.1.1.1" ];
+
   # Auto-upgrade configuration
   system.autoUpgrade = {
     enable = true;

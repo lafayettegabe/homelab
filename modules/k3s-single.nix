@@ -7,6 +7,8 @@
       "--write-kubeconfig-mode=0644"
       "--disable traefik"
       "--flannel-backend=vxlan"
+      "--cluster-dns=10.43.0.10"
+      "--cluster-domain=cluster.local"
     ];
   };
 
