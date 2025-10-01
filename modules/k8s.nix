@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 let
   domain = "homelab";
-  ip = "192.168.1.2";
+  ip = "192.168.1.7";
 in
 {
   services.k3s = {
