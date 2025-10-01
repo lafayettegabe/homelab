@@ -1,12 +1,45 @@
 { config, pkgs, lib, ... }:
 {
-  # Try MicroK8s instead of K3s
-  services.microk8s = {
-    enable = true;
-    addons = [ "dns" "storage" "metrics-server" ];
+  # Use full Kubernetes with kubeadm instead of K3s
+  services.kubernetes = {
+    master = {
+      enable = true;
+      apiserver = {
+        advertiseAddress = "192.168.1.2";
+        bindAddress = "0.0.0.0";
+        extraOpts = "--service-cluster-ip-range=10.43.0.0/16";
+      };
+      etcd = {
+        enable = true;
+        extraOpts = {
+          listen-client-urls = "https://127.0.0.1:2379,https://192.168.1.2:2379";
+          listen-peer-urls = "https://192.168.1.2:2380";
+          initial-cluster = "homelab=https://192.168.1.2:2380";
+          initial-cluster-state = "new";
+          initial-cluster-token = "k8s-cluster-token";
+          data-dir = "/var/lib/etcd";
+        };
+      };
+    };
+    worker = {
+      enable = true;
+      kubelet = {
+        extraOpts = "--pod-cidr=10.42.0.0/16";
+      };
+    };
+    flannel = {
+      enable = true;
+      network = "10.42.0.0/16";
+    };
+    addons.dns = {
+      enable = true;
+    };
+    addons.dashboard = {
+      enable = true;
+    };
   };
 
-  # Configure containerd for MicroK8s
+  # Configure containerd for Kubernetes
   virtualisation.containerd = {
     enable = true;
     settings = {
@@ -20,11 +53,11 @@
   systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
 
   environment.variables = {
-    KUBECONFIG = "/var/snap/microk8s/current/credentials/client.config";
+    KUBECONFIG = "/etc/kubernetes/admin.conf";
   };
 
   environment.shellInit = ''
-    export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
+    export KUBECONFIG=/etc/kubernetes/admin.conf
   '';
 
   environment.shellAliases = {
