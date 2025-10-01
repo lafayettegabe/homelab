@@ -34,6 +34,11 @@
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
+  # Firewall configuration for K3s
+  networking.firewall.allowedTCPPorts = [ 6443 2379 2380 10250 ];
+  networking.firewall.allowedUDPPorts = [ 8472 ];
+  networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
+
   # Auto-upgrade configuration
   system.autoUpgrade = {
     enable = true;
