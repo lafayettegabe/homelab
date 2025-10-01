@@ -8,7 +8,18 @@
       "--disable=traefik"
       "--disable=servicelb"
       "--disable=metrics-server"
+      "--flannel-iface=eth0"
     ];
+  };
+
+  # Add systemd service dependencies for proper networking
+  systemd.services.k3s = {
+    after = [ "network-online.target" "containerd.service" ];
+    wants = [ "network-online.target" ];
+    serviceConfig = {
+      Restart = "always";
+      RestartSec = "5s";
+    };
   };
 
   environment.variables = {
