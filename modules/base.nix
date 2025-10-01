@@ -31,9 +31,8 @@
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
-  # Firewall configuration for K3s (with additional ports for pod networking)
-  networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
-  networking.firewall.allowedUDPPorts = [ 8472 ];
+  # Temporarily disable firewall to test K3s networking
+  networking.firewall.enable = false;
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
