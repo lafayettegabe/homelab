@@ -34,6 +34,9 @@
     };
   };
 
+  # Critical: Delegate cgroups for proper container networking
+  systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
+
   environment.variables = {
     KUBECONFIG = "/etc/rancher/k3s/k3s.yaml";
   };

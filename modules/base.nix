@@ -35,11 +35,17 @@
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
-  # Firewall configuration for K3s with trusted interfaces
+  # Firewall configuration for K3s with trusted interfaces and extra rules
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
   networking.firewall.allowedUDPPorts = [ 8472 ];
   networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
+  networking.firewall.extraCommands = ''
+    iptables -A nixos-fw -p udp --dport 8472 -j nixos-fw-accept
+  '';
+
+  # Disable DHCP on virtual interfaces (critical for K3s networking)
+  networking.interfaces."veth*".useDHCP = false;
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
