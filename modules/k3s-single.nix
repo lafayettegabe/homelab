@@ -6,14 +6,7 @@
     extraFlags = [
       "--write-kubeconfig-mode=0644"
       "--disable traefik"
-      "--flannel-backend=vxlan"
-      "--cluster-cidr=10.42.0.0/16"
-      "--service-cidr=10.43.0.0/16"
     ];
-    extraKubeletConfig = {
-      clusterDNS = [ "10.43.0.10" ];
-      clusterDomain = "cluster.local";
-    };
   };
 
   environment.variables = {
