@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-  # Try K3s with minimal configuration and different approach
   services.k3s = {
     enable = true;
     role = "server";
@@ -17,19 +16,6 @@
       "--flannel-backend=vxlan"
     ];
   };
-
-  # Let K3s use its built-in containerd instead of external
-  # virtualisation.containerd = {
-  #   enable = true;
-  #   settings = {
-  #     plugins."io.containerd.grpc.v1.cri".containerd = {
-  #       snapshotter = "overlayfs";
-  #     };
-  #   };
-  # };
-
-  # Remove problematic cgroup delegation that might interfere with K3s
-  # systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
 
   environment.variables = {
     KUBECONFIG = "/etc/rancher/k3s/k3s.yaml";

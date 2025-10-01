@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-  # Full Kubernetes with kubeadm
   services.kubernetes = {
     master = {
       enable = true;
@@ -39,7 +38,6 @@
     };
   };
 
-  # Configure containerd for Kubernetes
   virtualisation.containerd = {
     enable = true;
     settings = {
@@ -49,7 +47,6 @@
     };
   };
 
-  # Critical: Delegate cgroups for proper container networking
   systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
 
   environment.variables = {

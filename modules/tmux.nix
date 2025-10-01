@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-  # Tmux configuration
   environment.etc."tmux.conf" = {
     text = ''
 # ─── 1) TPM & Plugins ─────────────────────────────────────────────────────────
@@ -61,7 +60,6 @@ bind Down select-pane -D
     mode = "0644";
   };
 
-  # Create symlink for tmux config in user home
   system.activationScripts.tmuxConfig = ''
     mkdir -p /home/server1
     ln -sf /etc/tmux.conf /home/server1/.tmux.conf
