@@ -19,13 +19,15 @@ environment.systemPackages = with pkgs; [
   cni-plugins
 ];
 
-  boot.kernelModules = [ "br_netfilter" "overlay" ];
-  boot.kernel.sysctl = {
-    "net.ipv4.ip_forward" = 1;
-    "net.bridge.bridge-nf-call-iptables" = 1;
-    "net.bridge.bridge-nf-call-ip6tables" = 1;
-    "vm.swappiness" = 10;
-  };
+boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
+boot.kernel.sysctl = {
+  "net.ipv4.ip_forward" = 1;
+  "net.bridge.bridge-nf-call-iptables" = 1;
+  "net.bridge.bridge-nf-call-ip6tables" = 1;
+  "vm.swappiness" = 10;
+  "net.ipv4.conf.all.forwarding" = 1;
+  "net.ipv6.conf.all.forwarding" = 1;
+};
 
   networking.nameservers = [ "1.1.1.1" ];
   networking.resolvconf.dnsExtensionMechanism = false;
@@ -33,8 +35,9 @@ environment.systemPackages = with pkgs; [
 networking.firewall = {
   enable = true;
   checkReversePath = false;
-  allowedTCPPorts = [ 6443 80 443 10250 ];
+  allowedTCPPorts = [ 6443 80 443 10250 8080 8181 ];
   allowedUDPPorts = [ 8472 ];
+  trustedInterfaces = [ "cni0" "flannel.1" "veth+" ];
 };
 
   networking.useNetworkd = true;
