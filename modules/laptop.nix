@@ -7,15 +7,13 @@
     lidSwitch = "ignore";
     lidSwitchExternalPower = "ignore";
     lidSwitchDocked = "ignore";
-    settings = {
-      Login = {
-        HandleSuspendKey = "ignore";
-        HandleHibernateKey = "ignore";
-        HandleLidSwitch = "ignore";
-        HandleLidSwitchExternalPower = "ignore";
-        HandleLidSwitchDocked = "ignore";
-      };
-    };
+    extraConfig = ''
+      HandleSuspendKey=ignore
+      HandleHibernateKey=ignore
+      HandleLidSwitch=ignore
+      HandleLidSwitchExternalPower=ignore
+      HandleLidSwitchDocked=ignore
+    '';
   };
 
   systemd.sleep.extraConfig = ''
