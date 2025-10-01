@@ -22,7 +22,7 @@
   ];
 
   # Network and container kernel modules
-  boot.kernelModules = [ "br_netfilter" ];
+  boot.kernelModules = [ "br_netfilter" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.bridge.bridge-nf-call-iptables" = 1;

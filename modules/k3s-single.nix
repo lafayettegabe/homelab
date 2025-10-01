@@ -14,6 +14,9 @@
       clusterDNS = [ "10.43.0.10" ];
       clusterDomain = "cluster.local";
     };
+    extraKubeProxyConfig = {
+      mode = "iptables";
+    };
   };
 
   environment.variables = {
