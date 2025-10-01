@@ -31,7 +31,8 @@
   };
 
   # DNS configuration
-  networking.nameservers = [ "8.8.8.8" "1.1.1.1" ];
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  networking.resolvconf.dnsExtensionMechanism = false;
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
