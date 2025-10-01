@@ -30,9 +30,12 @@ environment.systemPackages = with pkgs; [
   networking.nameservers = [ "1.1.1.1" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
-networking.firewall.enable = true;
-networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
-networking.firewall.allowedUDPPorts = [ 8472 ];
+networking.firewall = {
+  enable = true;
+  checkReversePath = false;
+  allowedTCPPorts = [ 6443 80 443 10250 ];
+  allowedUDPPorts = [ 8472 ];
+};
 
   networking.useNetworkd = true;
   systemd.network.enable = true;

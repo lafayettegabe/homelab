@@ -9,6 +9,8 @@
       "--disable=servicelb"
       "--disable=metrics-server"
       "--disable=local-storage"
+      "--disable=coredns"
+      "--disable=flannel"
       "--cluster-init"
     ];
   };
@@ -24,4 +26,36 @@
   environment.shellAliases = {
     k = "kubectl";
   };
+
+  environment.etc."k3s/coredns-custom.yaml" = {
+    mode = "0750";
+    text = ''
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: coredns-custom
+        namespace: kube-system
+      data:
+        domain.server: |
+          homelab:53 {
+            errors
+            health
+            ready
+            hosts {
+              192.168.1.2 homelab
+              fallthrough
+            }
+            prometheus :9153
+            forward . /etc/resolv.conf
+            cache 30
+            loop
+            reload
+            loadbalance
+          }
+    '';
+  };
+
+  systemd.tmpfiles.rules = [
+    "L /var/lib/rancher/k3s/server/manifests/00-coredns-custom.yaml - - - - /etc/k3s/coredns-custom.yaml"
+  ];
 }
