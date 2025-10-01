@@ -127,8 +127,11 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      Environment = "DISPLAY=";
       ExecStart = pkgs.writeShellScript "k3s-helmfile" ''
         set -e
+        unset DISPLAY
+        export DISPLAY=""
         echo "Waiting for K3s to be ready..."
         until ${pkgs.kubectl}/bin/kubectl --kubeconfig=/etc/rancher/k3s/k3s.yaml get nodes >/dev/null 2>&1; do
           sleep 5

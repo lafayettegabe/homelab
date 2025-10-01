@@ -17,8 +17,9 @@
   };
 
   powerManagement = {
-    cpuFreqGovernor = lib.mkDefault "ondemand";
-    cpufreq.max = lib.mkDefault 3000000;
+    enable = true;
+    cpuFreqGovernor = "ondemand";
+    cpufreq.max = 3000000;
   };
 
 environment.systemPackages = with pkgs; [
