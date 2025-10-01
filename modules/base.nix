@@ -26,7 +26,7 @@
     "vm.swappiness" = 10;
   };
 
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  networking.nameservers = [ "1.1.1.1" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
   networking.firewall.enable = true;
