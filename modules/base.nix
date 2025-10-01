@@ -44,8 +44,9 @@
     iptables -A nixos-fw -p udp --dport 8472 -j nixos-fw-accept
   '';
 
-  # Disable DHCP on virtual interfaces (critical for K3s networking)
-  networking.interfaces."veth*".useDHCP = false;
+  # Configure network interfaces to prevent DHCP conflicts with K3s
+  networking.useNetworkd = true;
+  systemd.network.enable = true;
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
