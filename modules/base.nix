@@ -11,12 +11,13 @@
   services.journald.extraConfig = "SystemMaxUse=500M";
   zramSwap.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    git htop btop iotop iftop jq curl wget vim
-    tmux neovim
-    kubectl k9s
-    iptables
-  ];
+environment.systemPackages = with pkgs; [
+  git htop btop iotop iftop jq curl wget vim
+  tmux neovim
+  kubectl k9s
+  iptables
+  cni-plugins
+];
 
   boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
   boot.kernel.sysctl = {
