@@ -31,8 +31,12 @@
   };
 
   # DNS configuration
-  networking.nameservers = [ "1.1.1.1" ];
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.resolvconf.dnsExtensionMechanism = false;
+  networking.resolvconf.extraConfig = ''
+    options timeout:1
+    options attempts:3
+  '';
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
