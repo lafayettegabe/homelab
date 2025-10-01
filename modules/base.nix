@@ -19,7 +19,7 @@ environment.systemPackages = with pkgs; [
   cni-plugins
 ];
 
-  boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
+  boot.kernelModules = [ "br_netfilter" "overlay" ];
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.bridge.bridge-nf-call-iptables" = 1;
@@ -30,13 +30,9 @@ environment.systemPackages = with pkgs; [
   networking.nameservers = [ "1.1.1.1" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
-  networking.firewall.allowedUDPPorts = [ 8472 ];
-  networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
-  networking.firewall.extraCommands = ''
-    iptables -A nixos-fw -p udp --dport 8472 -j nixos-fw-accept
-  '';
+networking.firewall.enable = true;
+networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
+networking.firewall.allowedUDPPorts = [ 8472 ];
 
   networking.useNetworkd = true;
   systemd.network.enable = true;
