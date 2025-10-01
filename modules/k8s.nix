@@ -15,20 +15,18 @@
       "--cluster-cidr=10.42.0.0/16"
       "--service-cidr=10.43.0.0/16"
       "--flannel-backend=vxlan"
-      "--kube-proxy-arg=cluster-cidr=10.42.0.0/16"
-      "--kube-proxy-arg=service-cluster-ip-range=10.43.0.0/16"
     ];
   };
 
-  # Use external containerd
-  virtualisation.containerd = {
-    enable = true;
-    settings = {
-      plugins."io.containerd.grpc.v1.cri".containerd = {
-        snapshotter = "overlayfs";
-      };
-    };
-  };
+  # Let K3s use its built-in containerd instead of external
+  # virtualisation.containerd = {
+  #   enable = true;
+  #   settings = {
+  #     plugins."io.containerd.grpc.v1.cri".containerd = {
+  #       snapshotter = "overlayfs";
+  #     };
+  #   };
+  # };
 
   # Remove problematic cgroup delegation that might interfere with K3s
   # systemd.services."user@".serviceConfig.Delegate = "memory pids cpu cpuset";
