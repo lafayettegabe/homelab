@@ -14,7 +14,9 @@
       "--cluster-init"
       "--cluster-cidr=10.42.0.0/16"
       "--service-cidr=10.43.0.0/16"
-      "--flannel-backend=host-gw"
+      "--flannel-backend=vxlan"
+      "--kube-proxy-arg=cluster-cidr=10.42.0.0/16"
+      "--kube-proxy-arg=service-cluster-ip-range=10.43.0.0/16"
     ];
   };
 
