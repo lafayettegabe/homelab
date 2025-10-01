@@ -33,10 +33,6 @@
   # DNS configuration
   networking.nameservers = [ "1.1.1.1" ];
   networking.resolvconf.dnsExtensionMechanism = false;
-  networking.resolvconf.extraConfig = ''
-    # Override any additional nameservers
-    nameserver 1.1.1.1
-  '';
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
