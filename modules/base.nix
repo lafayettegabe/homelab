@@ -19,6 +19,7 @@
     git htop btop iotop iftop jq curl wget vim
     tmux neovim
     kubectl k9s
+    iptables
   ];
 
   # Kernel modules and configuration for K3s service networking
@@ -34,8 +35,11 @@
   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   networking.resolvconf.dnsExtensionMechanism = false;
 
-  # Temporarily disable firewall to test K3s networking
-  networking.firewall.enable = false;
+  # Firewall configuration for K3s with trusted interfaces
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 6443 80 443 10250 ];
+  networking.firewall.allowedUDPPorts = [ 8472 ];
+  networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
