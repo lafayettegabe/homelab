@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 {
+  # CRITICAL: Set system state version
+  system.stateVersion = "25.05";
+
   imports = [
     ./hardware-configuration.nix
     ./hosts/server1.nix

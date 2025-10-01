@@ -47,6 +47,12 @@
   # Configure network interfaces to prevent DHCP conflicts with K3s
   networking.useNetworkd = true;
   systemd.network.enable = true;
+  
+  # Configure systemd-networkd for proper networking
+  systemd.network.networks."40-enp3s0" = {
+    matchConfig.Name = "enp3s0";
+    networkConfig.DHCP = "yes";
+  };
 
   # Auto-upgrade configuration
   system.autoUpgrade = {
