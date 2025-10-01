@@ -17,9 +17,6 @@ in
       "--disable=coredns"
       "--disable=flannel"
       "--cluster-init"
-      "--cluster-cidr=10.42.0.0/16"
-      "--service-cidr=10.43.0.0/16"
-      "--flannel-backend=vxlan"
     ];
   };
 
@@ -63,134 +60,98 @@ in
     '';
   };
 
-  environment.etc."k3s/coredns-deployment.yaml" = {
+  environment.etc."k3s/helmfile.yaml" = {
     mode = "0750";
     text = ''
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: kube-dns
-        namespace: kube-system
-        labels:
-          k8s-app: kube-dns
-          kubernetes.io/cluster-service: "true"
-          kubernetes.io/name: "CoreDNS"
-      spec:
-        selector:
-          k8s-app: kube-dns
-        clusterIP: 10.43.0.10
-        ports:
-        - name: dns
-          port: 53
-          protocol: UDP
-        - name: dns-tcp
-          port: 53
-          protocol: TCP
-        - name: metrics
-          port: 9153
-          protocol: TCP
-      ---
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: coredns
-        namespace: kube-system
-        labels:
-          k8s-app: kube-dns
-      spec:
-        replicas: 1
-        selector:
-          matchLabels:
-            k8s-app: kube-dns
-        template:
-          metadata:
-            labels:
-              k8s-app: kube-dns
-          spec:
-            containers:
-            - name: coredns
-              image: coredns/coredns:1.11.1
-              args:
-              - -conf
-              - /etc/coredns/Corefile
-              ports:
-              - containerPort: 53
-                name: dns
-                protocol: UDP
-              - containerPort: 53
-                name: dns-tcp
-                protocol: TCP
-              - containerPort: 9153
-                name: metrics
-                protocol: TCP
-              volumeMounts:
-              - name: config-volume
-                mountPath: /etc/coredns
-              resources:
-                limits:
-                  memory: 170Mi
-                requests:
-                  cpu: 100m
-                  memory: 70Mi
-              livenessProbe:
-                httpGet:
-                  path: /health
-                  port: 8080
-                  scheme: HTTP
-                initialDelaySeconds: 60
-                timeoutSeconds: 5
-                successThreshold: 1
-                failureThreshold: 5
-              readinessProbe:
-                httpGet:
-                  path: /ready
-                  port: 8181
-                  scheme: HTTP
-            volumes:
-            - name: config-volume
-              configMap:
-                name: coredns
-                items:
-                - key: Corefile
-                  path: Corefile
-            dnsPolicy: Default
-      ---
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: coredns
-        namespace: kube-system
-      data:
-        Corefile: |
-          .:53 {
-              errors
-              health
-              ready
-              kubernetes cluster.local in-addr.arpa ip6.arpa {
-                pods insecure
-                fallthrough in-addr.arpa ip6.arpa
-                ttl 30
-              }
-              hosts /etc/coredns/NodeHosts {
-                  ttl 60
-                  reload 15s
-                  fallthrough
-              }
-              prometheus :9153
-              forward . /etc/resolv.conf
-              cache 30
-              loop
-              reload
-              loadbalance
-          }
-        NodeHosts: |
-          ${ip} ${domain}
+      repositories:
+        - name: coredns
+          url: https://coredns.github.io/helm
+        - name: cilium
+          url: https://helm.cilium.io
+      releases:
+        - name: cilium
+          namespace: kube-system
+          chart: cilium/cilium
+          version: 1.17.4
+          values:
+            - kubeProxyReplacement: "disabled"
+            - ipam:
+                mode: "kubernetes"
+            - k8sServiceHost: "127.0.0.1"
+            - k8sServicePort: "6443"
+            - cluster:
+                name: "homelab"
+            - operator:
+                replicas: 1
+          wait: true
+        - name: coredns
+          namespace: kube-system
+          chart: coredns/coredns
+          version: 1.42.4
+          values:
+            - service:
+                clusterIP: "10.43.0.10"
+            - config:
+                custom:
+                  homelab:53 {
+                    errors
+                    health
+                    ready
+                    hosts {
+                      ${ip} ${domain}
+                      fallthrough
+                    }
+                    prometheus :9153
+                    forward . /etc/resolv.conf
+                    cache 30
+                    loop
+                    reload
+                    loadbalance
+                  }
+          wait: true
+          needs:
+          - kube-system/cilium
     '';
   };
 
   systemd.tmpfiles.rules = [
     "d /var/lib/rancher/k3s/server/manifests 0755 root root -"
     "L /var/lib/rancher/k3s/server/manifests/00-coredns-custom.yaml - - - - /etc/k3s/coredns-custom.yaml"
-    "L /var/lib/rancher/k3s/server/manifests/01-coredns-deployment.yaml - - - - /etc/k3s/coredns-deployment.yaml"
+    "L /var/lib/rancher/k3s/server/manifests/01-helmfile.yaml - - - - /etc/k3s/helmfile.yaml"
   ];
+
+  systemd.services.k3s-helmfile = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "k3s.service" ];
+    requires = [ "k3s.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "k3s-helmfile" ''
+        set -e
+        echo "Waiting for K3s to be ready..."
+        until ${pkgs.kubectl}/bin/kubectl --kubeconfig=/etc/rancher/k3s/k3s.yaml get nodes >/dev/null 2>&1; do
+          sleep 5
+        done
+        echo "K3s is ready, deploying helmfile..."
+        ${pkgs.helm}/bin/helm repo add coredns https://coredns.github.io/helm
+        ${pkgs.helm}/bin/helm repo add cilium https://helm.cilium.io
+        ${pkgs.helm}/bin/helm repo update
+        ${pkgs.helm}/bin/helm upgrade --install cilium cilium/cilium --version 1.17.4 \
+          --namespace kube-system \
+          --set kubeProxyReplacement=disabled \
+          --set ipam.mode=kubernetes \
+          --set k8sServiceHost=127.0.0.1 \
+          --set k8sServicePort=6443 \
+          --set cluster.name=homelab \
+          --set operator.replicas=1 \
+          --wait
+        ${pkgs.helm}/bin/helm upgrade --install coredns coredns/coredns --version 1.42.4 \
+          --namespace kube-system \
+          --set service.clusterIP=10.43.0.10 \
+          --wait
+        echo "Helmfile deployment completed"
+      '';
+    };
+  };
 }

@@ -9,7 +9,17 @@
   };
 
   services.journald.extraConfig = "SystemMaxUse=500M";
-  zramSwap.enable = true;
+  
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 25;
+  };
+
+  powerManagement = {
+    cpuFreqGovernor = "ondemand";
+    cpufreq.max = 3000000;
+  };
 
 environment.systemPackages = with pkgs; [
   git htop btop iotop iftop jq curl wget vim
@@ -17,6 +27,19 @@ environment.systemPackages = with pkgs; [
   kubectl k9s
   iptables
   cni-plugins
+  helm
+  gnutar
+  ser2net
+  par2cmdline
+  hdparm
+  rsync
+  gzip
+  findutils
+  libvirt
+  qemu_full
+  fluxcd
+  coreutils
+  memtest86plus
 ];
 
 boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
@@ -52,5 +75,26 @@ networking.firewall = {
     enable = true;
     allowReboot = true;
     dates = "03:30";
+  };
+
+  services.udev.extraRules = 
+    let
+      mkRule = as: lib.concatStringsSep ", " as;
+      mkRules = rs: lib.concatStringsSep "\n" rs;
+    in mkRules ([( mkRule [
+      ''ACTION=="add|change"''
+      ''SUBSYSTEM=="block"''
+      ''KERNEL=="sd[a-z]"''
+      ''ATTR{queue/rotational}=="1"''
+      ''RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 60 /dev/%k"''
+    ])]);
+
+  boot.loader.grub = {
+    extraEntries = ''
+      menuentry "Memtest86+" {
+        linux /@/boot/memtest.bin console=ttyS0,115200
+      }
+    '';
+    extraFiles."../memtest.bin" = "${pkgs.memtest86plus}/memtest.bin";
   };
 }
