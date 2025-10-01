@@ -6,6 +6,7 @@
     extraFlags = [
       "--write-kubeconfig-mode=0644"
       "--disable traefik"
+      "--flannel-backend=vxlan"
     ];
   };
 
