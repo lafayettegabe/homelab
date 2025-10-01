@@ -21,9 +21,12 @@
     kubectl k9s
   ];
 
-  # Minimal kernel configuration (based on working k3s-nix example)
+  # Kernel modules and configuration for K3s service networking
+  boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
+    "net.bridge.bridge-nf-call-iptables" = 1;
+    "net.bridge.bridge-nf-call-ip6tables" = 1;
     "vm.swappiness" = 10;
   };
 

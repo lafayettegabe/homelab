@@ -9,6 +9,8 @@
       "--disable=servicelb"
       "--disable=metrics-server"
       "--flannel-iface=enp3s0"
+      "--cluster-cidr=10.42.0.0/16"
+      "--service-cidr=10.43.0.0/16"
     ];
   };
 
