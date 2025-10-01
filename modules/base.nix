@@ -26,31 +26,19 @@ environment.systemPackages = with pkgs; [
   git htop btop iotop iftop jq curl wget vim
   tmux neovim
   kubectl k9s
-  iptables
-  cni-plugins
   helm
+  iptables
   gnutar
-  ser2net
-  par2cmdline
   hdparm
   rsync
   gzip
   findutils
-  libvirt
-  qemu_full
-  fluxcd
   coreutils
-  memtest86plus
 ];
 
-boot.kernelModules = [ "br_netfilter" "overlay" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "nf_conntrack" ];
+boot.kernelModules = [ "br_netfilter" "overlay" ];
 boot.kernel.sysctl = {
-  "net.ipv4.ip_forward" = 1;
-  "net.bridge.bridge-nf-call-iptables" = 1;
-  "net.bridge.bridge-nf-call-ip6tables" = 1;
   "vm.swappiness" = 10;
-  "net.ipv4.conf.all.forwarding" = 1;
-  "net.ipv6.conf.all.forwarding" = 1;
 };
 
   networking.nameservers = [ "1.1.1.1" ];
@@ -58,10 +46,8 @@ boot.kernel.sysctl = {
 
 networking.firewall = {
   enable = true;
-  checkReversePath = false;
-  allowedTCPPorts = [ 6443 80 443 10250 8080 8181 ];
+  allowedTCPPorts = [ 6443 80 443 10250 ];
   allowedUDPPorts = [ 8472 ];
-  trustedInterfaces = [ "cni0" "flannel.1" "veth+" ];
 };
 
   networking.useNetworkd = true;
@@ -90,12 +76,4 @@ networking.firewall = {
       ''RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 60 /dev/%k"''
     ])]);
 
-  boot.loader.grub = {
-    extraEntries = ''
-      menuentry "Memtest86+" {
-        linux /@/boot/memtest.bin console=ttyS0,115200
-      }
-    '';
-    extraFiles."../memtest.bin" = "${pkgs.memtest86plus}/memtest.bin";
-  };
 }

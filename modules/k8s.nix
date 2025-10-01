@@ -22,8 +22,4 @@
   environment.shellAliases = {
     k = "kubectl";
   };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/rancher/k3s/server/manifests 0755 root root -"
-  ];
 }
