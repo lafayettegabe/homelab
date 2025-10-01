@@ -35,7 +35,7 @@
   networking.resolvconf.dnsExtensionMechanism = false;
 
   # Firewall configuration for K3s
-  networking.firewall.allowedTCPPorts = [ 6443 2379 2380 8472 10250 51820 51821 5001 ];
+  networking.firewall.allowedTCPPorts = [ 6443 80 443 ];
   networking.firewall.allowedUDPPorts = [ 8472 ];
   networking.firewall.trustedInterfaces = [ "cni0" "flannel.1" ];
 
