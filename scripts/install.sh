@@ -10,7 +10,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-if [ ! -f "configuration.nix" ]; then
+if [ ! -f "infrastructure/configuration.nix" ]; then
     echo "❌ Please run this script from the homelab directory"
     exit 1
 fi
@@ -27,8 +27,8 @@ if [ -L "/etc/nixos" ]; then
     rm /etc/nixos
 fi
 
-echo "🔗 Creating symlink: $(pwd) -> /etc/nixos"
-ln -sf "$(pwd)" /etc/nixos
+echo "🔗 Creating symlink: $(pwd)/infrastructure -> /etc/nixos"
+ln -sf "$(pwd)/infrastructure" /etc/nixos
 
 if [ -L "/etc/nixos" ]; then
     echo "✅ Symlink created successfully"
@@ -53,13 +53,13 @@ if nixos-rebuild switch; then
     echo "🎉 Homelab setup complete!"
     echo "📋 Next steps:"
     echo "   - SSH is enabled with key authentication"
-    echo "   - K3s is running (kubectl configured)"
+    echo "   - K8s is running (kubectl configured)"
     echo "   - Power management optimized for headless server"
     echo "   - Monitor disabled for power saving"
     echo ""
     echo "🔧 Useful commands:"
-    echo "   - Check K3s: kubectl get nodes"
-    echo "   - Check services: systemctl status k3s sshd"
+    echo "   - Check K8s: kubectl get nodes"
+    echo "   - Check services: systemctl status k8s sshd"
     echo "   - Check power: powertop"
 else
     echo "❌ Failed to apply configuration"

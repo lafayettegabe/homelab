@@ -1,5 +1,5 @@
 # Private keys
-secrets/homelab_ed25519
+infrastructure/secrets/homelab_ed25519
 *.pem
 *.key
 # Local artifacts
