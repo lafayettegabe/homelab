@@ -8,6 +8,7 @@
       "--write-kubeconfig-mode=0644"
       "--disable=traefik"
       "--disable=servicelb"
+      "--node-ip=192.168.1.10"
     ];
   };
 
