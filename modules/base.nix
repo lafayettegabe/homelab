@@ -55,7 +55,12 @@ networking.firewall = {
   
   systemd.network.networks."40-enp3s0" = {
     matchConfig.Name = "enp3s0";
-    networkConfig.DHCP = "yes";
+    networkConfig = {
+      DHCP = "no";
+      Address = "192.168.1.10/24";
+      Gateway = "192.168.1.1";
+      DNS = [ "1.1.1.1" "8.8.8.8" ];
+    };
   };
 
   system.autoUpgrade = {
