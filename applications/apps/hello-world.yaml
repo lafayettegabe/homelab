@@ -21,6 +21,34 @@ spec:
         env:
         - name: MESSAGE
           value: "Hello from Homelab K8s!"
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo '<!DOCTYPE html>
+          <html>
+          <head>
+            <title>Homelab K8s</title>
+            <style>
+              body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .message { font-size: 24px; color: #2c3e50; margin: 20px 0; }
+              .info { color: #7f8c8d; font-size: 16px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>🚀 Homelab Kubernetes</h1>
+              <div class="message">'$MESSAGE'</div>
+              <div class="info">
+                <p>Running on NixOS with K3s</p>
+                <p>Pod: $(hostname)</p>
+                <p>Time: $(date)</p>
+              </div>
+            </div>
+          </body>
+          </html>' > /usr/share/nginx/html/index.html
+          nginx -g "daemon off;"
 ---
 apiVersion: v1
 kind: Service
