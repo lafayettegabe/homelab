@@ -15,6 +15,7 @@ echo "💾 Deploying storage..."
 ssh -i $SSH_KEY $USER@$SERVER_IP "kubectl apply -f -" < applications/storage/storage-class.yaml
 
 echo "🌐 Deploying networking..."
+ssh -i $SSH_KEY $USER@$SERVER_IP "kubectl apply -f -" < applications/networking/nginx-ingress-controller.yaml
 ssh -i $SSH_KEY $USER@$SERVER_IP "kubectl apply -f -" < applications/networking/ingress.yaml
 
 echo "📊 Deploying monitoring..."
