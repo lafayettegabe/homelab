@@ -25,7 +25,10 @@ spec:
         args:
         - -c
         - |
-          echo '<!DOCTYPE html>
+          POD_NAME=$(hostname)
+          CURRENT_TIME=$(date)
+          cat > /usr/share/nginx/html/index.html << EOF
+          <!DOCTYPE html>
           <html>
           <head>
             <title>Homelab K8s</title>
@@ -39,15 +42,16 @@ spec:
           <body>
             <div class="container">
               <h1>🚀 Homelab Kubernetes</h1>
-              <div class="message">'$MESSAGE'</div>
+              <div class="message">$MESSAGE</div>
               <div class="info">
                 <p>Running on NixOS with K3s</p>
-                <p>Pod: $(hostname)</p>
-                <p>Time: $(date)</p>
+                <p>Pod: $POD_NAME</p>
+                <p>Time: $CURRENT_TIME</p>
               </div>
             </div>
           </body>
-          </html>' > /usr/share/nginx/html/index.html
+          </html>
+          EOF
           nginx -g "daemon off;"
 ---
 apiVersion: v1
