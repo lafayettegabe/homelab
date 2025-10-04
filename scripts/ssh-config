@@ -1,0 +1,6 @@
+Host homelab-ssh
+    HostName ssh.imgabriel.dev
+    User server1
+    IdentityFile ~/.ssh/homelab_ed25519
+    ProxyCommand cloudflared access ssh --hostname %h
+    StrictHostKeyChecking no

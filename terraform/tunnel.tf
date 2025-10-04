@@ -14,6 +14,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab_config" {
   
   config {
     ingress_rule {
+      hostname = "ssh.imgabriel.dev"
+      service  = "ssh://192.168.1.10:22"
+    }
+    ingress_rule {
       hostname = "*.imgabriel.dev"
       service  = "http://192.168.1.10:30080"
     }
