@@ -1,6 +1,13 @@
-# Private keys
 infrastructure/secrets/homelab_ed25519
 *.pem
 *.key
-# Local artifacts
 kubeconfig
+terraform/terraform.tfvars
+terraform/tunnel-credentials.json
+terraform/tunnel-token.txt
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfplan
+terraform/.terraform.tfstate.lock.info

@@ -1,16 +1,15 @@
 #!/bin/bash
 set -e
 
-SERVER_IP="192.168.1.10"
-SSH_KEY="infrastructure/secrets/homelab_ed25519"
-USER="server1"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/config.sh"
 
 echo "🔧 Updating infrastructure configuration..."
 
-ssh -i $SSH_KEY $USER@$SERVER_IP "cd homelab && git pull"
+ssh -i $SSH_KEY $SERVER_USER@$SERVER_IP "cd homelab && git pull"
 
 echo "🏗️  Rebuilding NixOS configuration..."
-ssh -i $SSH_KEY $USER@$SERVER_IP "sudo nixos-rebuild switch"
+ssh -i $SSH_KEY $SERVER_USER@$SERVER_IP "sudo nixos-rebuild switch"
 
 echo "✅ Infrastructure update complete!"
 
